@@ -156,36 +156,20 @@ st.subheader("Markowitz Portfolio Optimization")
 
 try:
 
-    prices_opt = prices.copy()
-
-    prices_opt = prices_opt.replace(
-        [np.inf, -np.inf],
-        np.nan
-    )
-
-    prices_opt = prices_opt.ffill().dropna()
+    prices_opt = prices.ffill().dropna()
 
     mu = expected_returns.mean_historical_return(prices_opt)
-
     S = risk_models.sample_cov(prices_opt)
 
-    mu = mu.dropna()
-
-    S = S.dropna(how="all").dropna(axis=1, how="all")
-
-    common_assets = mu.index.intersection(S.index)
-
-    mu = mu.loc[common_assets]
-    S = S.loc[common_assets, common_assets]
+    st.write("Stocks used for optimization:")
+    st.write(list(prices_opt.columns))
 
     ef = EfficientFrontier(mu, S)
 
     weights = ef.max_sharpe()
-
     cleaned_weights = ef.clean_weights()
 
     st.write("Optimized Weights")
-
     st.write(cleaned_weights)
 
     expected_return, volatility, sharpe = ef.portfolio_performance()
@@ -195,7 +179,6 @@ try:
     st.write(f"Sharpe Ratio: {sharpe:.2f}")
 
 except Exception as e:
-
     st.error(f"Optimization Error: {e}")
 
 # ---------------- PROJECT SUMMARY ----------------
