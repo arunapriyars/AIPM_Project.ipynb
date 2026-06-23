@@ -229,16 +229,15 @@ for stock in stocks:
         )
 
         model.fit(X_train, y_train)
+current_price = temp['Close'].values[-1]
 
-        current_price = float(temp['Close'].iloc[-1])
+future_input = pd.DataFrame(
+    {'Close': [current_price]}
+)
 
-        future_input = pd.DataFrame({
-            'Close': [current_price]
-        })
-
-        predicted_price = float(
-            model.predict(future_input)[0]
-        )
+predicted_price = model.predict(
+    future_input
+)[0]
 
         expected_return = float(
             ((predicted_price - current_price)
