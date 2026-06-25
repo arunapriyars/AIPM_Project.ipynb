@@ -197,9 +197,7 @@ st.subheader("ML Based Stock Recommendation")
 recommendations = []
 
 for stock in stocks:
-
     try:
-
         temp = yf.download(
             stock,
             start='2021-01-01',
@@ -208,9 +206,7 @@ for stock in stocks:
         )
 
         temp = temp[['Close']].copy()
-
         temp['Target'] = temp['Close'].shift(-1)
-
         temp.dropna(inplace=True)
 
         X = temp[['Close']]
@@ -229,27 +225,27 @@ for stock in stocks:
         )
 
         model.fit(X_train, y_train)
-current_price = temp['Close'].values[-1]
 
-future_input = pd.DataFrame(
-    {'Close': [current_price]}
-)
+        current_price = temp['Close'].iloc[-1]
 
-predicted_price = model.predict(
-    future_input
-)[0]
+        future_input = pd.DataFrame({
+            'Close': [current_price]
+        })
 
-        expected_return = float(
-            ((predicted_price - current_price)
-             / current_price) * 100
-        )
+        predicted_price = model.predict(
+            future_input
+        )[0]
+
+        expected_return = (
+            (predicted_price - current_price)
+            / current_price
+        ) * 100
 
         recommendations.append(
             [stock, round(expected_return, 2)]
         )
 
     except Exception as e:
-
         st.write(f"{stock} Error: {e}")
 
 if len(recommendations) > 0:
