@@ -205,7 +205,8 @@ for stock in stocks:
             auto_adjust=True
         )
 
-        temp = temp[['Close']].copy()
+        temp = pd.DataFrame(temp['Close'])
+        temp.columns = ['Close']
         temp['Target'] = temp['Close'].shift(-1)
         temp.dropna(inplace=True)
 
